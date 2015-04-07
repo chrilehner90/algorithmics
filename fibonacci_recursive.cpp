@@ -23,13 +23,13 @@ mpz_class fibonacci(unsigned n) {
 	}
 }
 
-void print_success(unsigned numbers[4], double average_runtimes[4]) {
+void print_success(unsigned numbers[], double average_runtimes[]) {
 	for (int i = 0; i < 4; ++i) {
 		cout << "Average runtime " << numbers[i] << ":\t" << average_runtimes[i] << endl;
 	}
 }
 
-void print_failure(unsigned numbers[4], double average_runtimes[4]) {
+void print_failure(unsigned numbers[], double average_runtimes[]) {
 	for (int i = 0; i < 4; ++i) {
 		if(average_runtimes[i] != 0) {
 			cout << "Runtime " << numbers[i] << ":\t" << average_runtimes[i] << endl;	
@@ -50,7 +50,8 @@ int main() {
 		for(unsigned j = 0; j < 5; j++) {
 			try {
 				start = std::chrono::steady_clock::now();
-				cout << "Fib: " << fibonacci(numbers[i]) << endl;
+				fibonacci(numbers[i]);
+				cout << "Fib(" << numbers[i] << "): done" << endl;
 				runtime += time_taken.count();
 			}
 			catch(const char* e) {
