@@ -14,3 +14,9 @@ it:
 	./fibonacci_iterative
 	rm -rf fibonacci_iterative.dSYM
 	rm fibonacci_iterative
+
+mat:
+	$(CXX) $(CXXFLAGS) -o fibonacci_matrices fibonacci_matrices.cpp
+	./fibonacci_matrices
+	rm -rf fibonacci_matrices.dSYM
+	rm fibonacci_matrices
