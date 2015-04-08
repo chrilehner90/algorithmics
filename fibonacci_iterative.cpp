@@ -3,6 +3,7 @@
 #include <chrono>
 #include <gmp.h>
 #include <gmpxx.h>
+#include <fstream>
 
 using namespace std;
 
@@ -10,56 +11,67 @@ using namespace std;
 std::chrono::high_resolution_clock::time_point start;
 std::chrono::duration<double> time_taken;
 
-const unsigned MAX_TIME = 300; // 5 min
+ofstream file;
+
+const char* FILENAME = "./data/iterative.dat";
+const unsigned MAX_TIME = 60; // 1 min
+const unsigned NUMBERS_COUNT = 4;
+const unsigned RUNS_COUNT = 5;
 
 mpz_class fibonacci(unsigned n) {
-	time_taken = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - start);
-	
-	if(time_taken.count() < MAX_TIME) {
-		mpz_class fn_1 = 1;
-		mpz_class fn_2 = 1;
-		mpz_class result = 0;
-		for(unsigned i = 3; i <= n; i++) {
+	mpz_class fn_1 = 1;
+	mpz_class fn_2 = 1;
+	mpz_class result = 0;
+	for(unsigned i = 3; i <= n; i++) {
+		if(time_taken.count() < MAX_TIME) {
 			result = fn_1 + fn_2;
 			fn_2 = fn_1;
 			fn_1 = result;
 		}
-		return result;
+		else {
+			throw "Max time exceeded -> Infinity\n";
+		}
+		time_taken = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start);
 	}
-	else {
-		throw "Max time exceeded max time -> Infinity\n";
-	}
+	return result;
+	
 }
 
-void print_success(unsigned numbers[], double average_runtimes[]) {
-	for (int i = 0; i < 4; ++i) {
-		cout << "Average runtime " << numbers[i] << ":\t" << average_runtimes[i] << endl;
+void print_success(unsigned numbers[NUMBERS_COUNT], double average_runtimes[NUMBERS_COUNT]) {
+	file.open(FILENAME);
+	for (int i = 0; i < NUMBERS_COUNT; ++i) {
+		file << numbers[i] << "\t" << average_runtimes[i] << endl;
 	}
+	file.close();
 }
 
-void print_failure(unsigned numbers[], double average_runtimes[]) {
-	for (int i = 0; i < 4; ++i) {
+void print_failure(unsigned numbers[NUMBERS_COUNT], double average_runtimes[NUMBERS_COUNT]) {
+	file.open(FILENAME);
+	for (int i = 0; i < NUMBERS_COUNT; ++i) {
 		if(average_runtimes[i] != 0) {
-			cout << "Runtime " << numbers[i] << ":\t" << average_runtimes[i] << endl;	
+			file << numbers[i] << "\t" << average_runtimes[i] << endl;	
 		}
 		else {
-			cout << "Runtime " << numbers[i] << ":\tINF" << endl;	
+			file << numbers[i] << "\tINF" << endl;	
 		}
 	}
+	file.close();
 }
 
 int main() {
 	cout << "\nMAX RUNTIME set to " << MAX_TIME << " seconds\n" << endl;
-	unsigned numbers[4] = { 100, 1000, 10000, 1000000 };
-	double average_runtimes[4] = { 0 };
+	unsigned numbers[NUMBERS_COUNT] = { 100, 1000, 10000, 1000000 };
+	double average_runtimes[NUMBERS_COUNT] = { 0 };
 
-	for(unsigned i = 0; i < 4; i++) {
+
+	for(unsigned i = 0; i < NUMBERS_COUNT; i++) {
 		double runtime = 0;
-		for(unsigned j = 0; j < 5; j++) {
+		for(unsigned j = 0; j < RUNS_COUNT; j++) {
 			try {
 				start = std::chrono::high_resolution_clock::now();
 				fibonacci(numbers[i]);
-				cout << "Fib(" << numbers[i] << "): done" << endl;
+				time_taken = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start);
+				cout << "Fib(" << numbers[i] << "): done..." << endl;
 				runtime += time_taken.count();
 			}
 			catch(const char* e) {
@@ -68,8 +80,9 @@ int main() {
 				return 0;
 			}
 		}
-		average_runtimes[i] = runtime / 5;
+		average_runtimes[i] = runtime / RUNS_COUNT;
 	}
 	print_success(numbers, average_runtimes);
+	cout << endl << "File written into data folder." << endl << endl;
 	return 0;
 }
