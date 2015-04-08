@@ -1,7 +1,9 @@
 CXX = g++
 CXXFLAGS = -Wall -g -std=c++11 -O2 -lgmpxx -lgmp
+PLOT_CONFIG = config.p
+PLOT = plot.png
 
-all: rec it
+all: rec it mat plot
 
 rec:
 	$(CXX) $(CXXFLAGS) -o fibonacci_recursive fibonacci_recursive.cpp
@@ -20,3 +22,6 @@ mat:
 	./fibonacci_matrices
 	rm -rf fibonacci_matrices.dSYM
 	rm fibonacci_matrices
+
+plot:
+	gnuplot $(PLOT_CONFIG) > $(PLOT)
