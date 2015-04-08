@@ -53,8 +53,8 @@ int main() {
 			try {
 				start = std::chrono::steady_clock::now();
 				fibonacci(numbers[i]);
-				cout << "Fib(" << numbers[i] << "): done..." << endl;
 				time_taken = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - start);
+				cout << "Fib(" << numbers[i] << "): done..." << endl;	
 				runtime += time_taken.count();
 			}
 			catch(const char* e) {
