@@ -1,0 +1,22 @@
+{
+  "name": "KMP",
+  "version": "1.0.0",
+  "description": "Knuth-Morris-Pratt-Algorithm",
+  "main": "kmp.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrilehner90/algorithmics.git"
+  },
+  "author": "Christian Lehner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chrilehner90/algorithmics/issues"
+  },
+  "homepage": "https://github.com/chrilehner90/algorithmics",
+  "dependencies": {
+    "q": "^1.4.0"
+  }
+}
