@@ -64,24 +64,37 @@ var computeBorders = function(searchText) {
   return border;
 }
 
+var measure = function(algorithm, fullText, searchText, message) {
+  var prefixLengths = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+  results = [];
+  times = [];
+
+  console.log("\nExecuting " + message + ". Hold on...");
+  for(var i in prefixLengths) {
+    prefixLength = prefixLengths[i];
+    var start = process.hrtime();
+    results.push(algorithm(fullText, searchText.substr(0, prefixLength)));
+    var diff = process.hrtime(start);
+    times.push(diff[0] * 1e9 + diff[1]);
+  }
+
+  return {
+    results: results,
+    times: times
+  }
+}
+
 
 Q.all([fullTextPromise, searchTextPromise]).done(function(data) {
   var fullText = data[0].toString();
   var searchText = data[1].toString();
 
-  var prefixLengths = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+  var naive = measure(naiveApproach, fullText, searchText, "naive approach");
+  var kmp = measure(KMP, fullText, searchText, "kmp algorithm");
 
-  console.log("Executing naive approach. Hold on...");
-  for(var i in prefixLengths) {
-    prefixLength = prefixLengths[i];
-    console.log(naiveApproach(fullText, searchText.substr(0, prefixLength)));
-  }
-
-  console.log("\nExecuting KMP. Hold on...");
-  for(var i in prefixLengths) {
-    prefixLength = prefixLengths[i];
-    console.log(KMP(fullText, searchText.substr(0, prefixLength)));
-  }
-
-
+  console.log("naive");
+  console.log(naive);
+  
+  console.log("kmp");
+  console.log(kmp);
 });
