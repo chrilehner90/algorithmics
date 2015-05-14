@@ -1,11 +1,14 @@
 var fs = require('fs');
 var Q = require('q');
 
+var UTILS = require('./utils.js');
+
 var fulltextFile = 'first_quarter_of_chromosome1.fa';
 var searchtextFile = 'parkinson_gene.fa';
 
 // create a readFile function that returns a promise
 var readFile = Q.denodeify(fs.readFile);
+var writeFile = Q.denodeify(fs.writeFile);
 
 var fullTextPromise = readFile(fulltextFile);
 var searchTextPromise = readFile(searchtextFile);
@@ -64,37 +67,64 @@ var computeBorders = function(searchText) {
   return border;
 }
 
-var measure = function(algorithm, fullText, searchText, message) {
+var measure = function(algorithm, prefixLenghts, fullText, searchText, message, repetitions) {
   var prefixLengths = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-  results = [];
-  times = [];
 
-  console.log("\nExecuting " + message + ". Hold on...");
+  var results = [];
+  var result = 0;
+  var averageTimes = [];
+
+  console.log("\nExecuting " + message + " " + repetitions + " times. Hold on...");
+
   for(var i in prefixLengths) {
-    prefixLength = prefixLengths[i];
-    var start = process.hrtime();
-    results.push(algorithm(fullText, searchText.substr(0, prefixLength)));
-    var diff = process.hrtime(start);
-    times.push(diff[0] * 1e9 + diff[1]);
+    var times = [];
+    for(var j = 0; j < repetitions; j++) {
+      prefixLength = prefixLengths[i];
+      // high resolution time measurement
+      var start = process.hrtime();
+      result = algorithm(fullText, searchText.substr(0, prefixLength));
+      var diff = process.hrtime(start);
+      times.push(diff[0] * 1e9 + diff[1]);
+    }
+    results.push(result);
+    averageTimes.push(Math.floor(UTILS.average(times)));
   }
 
   return {
     results: results,
-    times: times
+    avgTimes: averageTimes
   }
+}
+
+var exportFile = function(prefixLenghts, naive, kmp) {
+  var output = "";
+  for(var i in prefixLenghts) {
+    output += prefixLenghts[i] + "\t" + naive.results[i] + " \t" + naive.avgTimes[i] + "\t" + kmp.avgTimes[i] + "\n";
+  }
+  
+  var writing = writeFile('data.dat', new Buffer(output));
+  writing.done(function() {
+    console.log("Results written to data.dat file!");
+  })
+
 }
 
 
 Q.all([fullTextPromise, searchTextPromise]).done(function(data) {
   var fullText = data[0].toString();
   var searchText = data[1].toString();
+  var prefixLengths = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
-  var naive = measure(naiveApproach, fullText, searchText, "naive approach");
-  var kmp = measure(KMP, fullText, searchText, "kmp algorithm");
+  var repetitions = process.argv[2] || 5;
+
+  var naive = measure(naiveApproach, prefixLengths, fullText, searchText, "naive approach", repetitions);
+  var kmp = measure(KMP, prefixLengths, fullText, searchText, "kmp algorithm" , repetitions);
 
   console.log("naive");
   console.log(naive);
   
   console.log("kmp");
   console.log(kmp);
+
+  exportFile(prefixLengths, naive, kmp);
 });
