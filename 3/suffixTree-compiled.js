@@ -65,69 +65,6 @@ var SuffixTree = (function () {
   return SuffixTree;
 })();
 
-//var Node = function(start, end) {
-//  var start = start || undefined;
-//  var end = end || undefined;
-//
-//  var children = []; // array of references to the text
-//
-//  // reference inside the text
-//  var reference = {
-//    start: start,
-//    end: end
-//  };
-//  var suffixLink = undefined;
-//
-//  return {
-//    children: children,
-//    reference: reference,
-//    suffixLink: suffixLink
-//  }
-//}
-
-//var SuffixTree = function() {
-//
-//  var start = 2;
-//  var i = 2;
-//
-//  var virtualRoot = new Node();
-//  var root = new Node(start, i - 1);
-//
-//  // virtualRoot --> root --> virtualRoot
-//  virtualRoot.children.push(root);
-//  root.suffixLink = virtualRoot;
-//
-//  var activeNode = root;
-//
-//  var buildSuffixTree = function(input) {
-//    for(; i < input.length; i++) {
-//      // construct T^i from T^i-1
-//      var result = update(activeNode, input, i);
-//      //start = result.start;
-//      //activeNode = result.activeNode;
-//    }
-//  }
-//
-//  var update = function(activeNode, input, index) {
-//    var lastInsertedNode = root;
-//    var canonizedNode = canonize(activeNode);
-//    //var resultTestAndSplit = testAndSplit(canonizedNode, input, );
-//    console.log(index);
-//  }
-//
-//  var canonize = function() {
-//
-//  }
-//
-//  var testAndSplit = function() {
-//
-//  }
-//
-//  return {
-//    buildSuffixTree: buildSuffixTree
-//  };
-//}
-
 module.exports = SuffixTree;
 
 //# sourceMappingURL=suffixTree-compiled.js.map
