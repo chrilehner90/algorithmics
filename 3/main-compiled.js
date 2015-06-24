@@ -34,7 +34,7 @@ function exportFile(results) {
 }
 
 Q.all([sherlockHolmes1Promise, sherlockHolmes2Promise, sherlockHolmes3Promise, sherlockHolmes4Promise, sherlockHolmes5Promise]).done(function (data) {
-  var suffixTree = new SuffixTree('test');
+  var suffixTree = new SuffixTree();
   suffixTree.buildSuffixTree('ababbaa');
 });
 

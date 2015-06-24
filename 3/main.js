@@ -43,7 +43,7 @@ Q.all([
   sherlockHolmes5Promise
 ])
   .done(function(data) {
-    var suffixTree = new SuffixTree("test");
+    var suffixTree = new SuffixTree();
     suffixTree.buildSuffixTree("ababbaa");
 
 
