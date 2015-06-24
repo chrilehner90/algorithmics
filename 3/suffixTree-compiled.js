@@ -4,41 +4,53 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Node = function Node(start, end) {
-  _classCallCheck(this, Node);
+var Node = (function () {
+  function Node(start, end, textIndex) {
+    _classCallCheck(this, Node);
 
-  this.start = start || undefined;
-  this.end = end || undefined;
+    this.children = []; // array of references to the text
 
-  this.children = []; // array of references to the text
+    // reference inside the text
+    this.reference = {
+      start: start,
+      end: end,
+      textIndex: textIndex
+    };
+    this.suffixLink = undefined;
+  }
 
-  // reference inside the text
-  this.reference = {
-    start: this.start,
-    end: this.end
-  };
-  this.suffixLink = undefined;
-};
+  _createClass(Node, [{
+    key: "isLeaf",
+    value: function isLeaf() {
+      if (this.children.length === 0) return true;
+    }
+  }]);
+
+  return Node;
+})();
 
 var SuffixTree = (function () {
   function SuffixTree() {
     _classCallCheck(this, SuffixTree);
 
     this.start = 2;
-    this.i = 2;
+
+    // collect all inputs
+    this.inputs = [];
 
     this.virtualRoot = new Node();
-    this.root = new Node(this.start, 2);
+    this.rootNode = new Node(this.start, 1);
 
     // virtualRoot --> root --> virtualRoot
-    virtualRoot.children.push(root);
-    root.suffixLink = virtualRoot;
+    this.virtualRoot.children.push(this.root);
+    this.rootNode.suffixLink = this.virtualRoot;
   }
 
   _createClass(SuffixTree, [{
     key: "buildSuffixTree",
     value: function buildSuffixTree(input) {
-      var activeNode = root;
+
+      var activeNode = this.rootNode;
       for (var i = 2; i < input.length; i++) {
         // construct T^i from T^i-1
         var result = this.update(activeNode, input, i);
@@ -49,14 +61,36 @@ var SuffixTree = (function () {
   }, {
     key: "update",
     value: function update(activeNode, input, index) {
-      var lastInsertedNode = root;
+      var lastInsertedNode = this.rootNode;
       var canonizedNode = this.canonize(activeNode, input);
+      // TODO: implement testAndSplit function
+      // TODO: add text indices to references in Node class
       //var resultTestAndSplit = this.testAndSplit(canonizedNode, input, );
-      console.log(index);
     }
-  }], [{
+  }, {
     key: "canonize",
-    value: function canonize(activeNode, input) {}
+    value: function canonize(activeNode, input) {
+      while (activeNode.reference.end - activeNode.reference.start + 1 > 0) {
+        var child = undefined;
+
+        // find child with correct edge
+        for (var index in activeNode.children) {
+          var childStartIndex = activeNode.children[index].reference.start;
+          if (input[activeNode.reference.start] === input[childStartIndex]) {
+            child = activeNode.children[index];
+            break;
+          }
+        }
+
+        // check for minimal reference or if child is a leaf
+        if (child.reference.end - child.reference.start > activeNode.reference.end - activeNode.reference.start || child.isLeaf()) {
+          break;
+        }
+        activeNode = child;
+        activeNode.reference.start += 1;
+      }
+      return activeNode;
+    }
   }, {
     key: "testAndSplit",
     value: function testAndSplit() {}
