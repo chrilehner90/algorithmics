@@ -18,5 +18,8 @@
   "homepage": "https://github.com/chrilehner90/algorithmics",
   "dependencies": {
     "q": "^1.4.0"
+  },
+  "devDependencies": {
+    "source-map-support": "^0.3.2"
   }
 }

@@ -1,5 +1,7 @@
 'use strict';
 
+require('source-map-support').install(); // use sourcemaps
+
 var fs = require('fs'),
     Q = require('q'),
     SuffixTree = require('./suffixTree-compiled'),
@@ -21,21 +23,22 @@ var sherlockHolmes1Promise = readFile(sherlockHolmes1),
     sherlockHolmes4Promise = readFile(sherlockHolmes4),
     sherlockHolmes5Promise = readFile(sherlockHolmes5);
 
-function exportFile(results) {
-  var output = '';
-  for (var i in prefixLenghts) {
-    output += 'test' + '\t' + 'test' + '\n';
-  }
-
-  var writingPromise = writeFile('data.dat', new Buffer(output));
-  writingPromise.done(function () {
-    console.log('Results written to data.dat file!');
-  });
-}
+//function exportFile(results) {
+//  let output = "";
+//  for(let i in prefixLenghts) {
+//    output += "test" + "\t" + "test" + "\n";
+//  }
+//
+//  let writingPromise = writeFile('data.dat', new Buffer(output));
+//  writingPromise.done(function() {
+//    console.log("Results written to data.dat file!");
+//  });
+//
+//}
 
 Q.all([sherlockHolmes1Promise, sherlockHolmes2Promise, sherlockHolmes3Promise, sherlockHolmes4Promise, sherlockHolmes5Promise]).done(function (data) {
-  var suffixTree = new SuffixTree();
-  suffixTree.buildSuffixTree('ababbaa');
+    var suffixTree = new SuffixTree();
+    suffixTree.buildSuffixTree('ababbaa');
 });
 
 //# sourceMappingURL=main-compiled.js.map

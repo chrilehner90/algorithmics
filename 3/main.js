@@ -1,3 +1,5 @@
+require('source-map-support').install(); // use sourcemaps
+
 let fs = require('fs'),
     Q = require('q'),
     SuffixTree = require('./suffixTree-compiled'),
@@ -21,18 +23,18 @@ let sherlockHolmes1Promise = readFile(sherlockHolmes1),
     sherlockHolmes5Promise = readFile(sherlockHolmes5);
 
 
-function exportFile(results) {
-  let output = "";
-  for(var i in prefixLenghts) {
-    output += "test" + "\t" + "test" + "\n";
-  }
-
-  let writingPromise = writeFile('data.dat', new Buffer(output));
-  writingPromise.done(function() {
-    console.log("Results written to data.dat file!");
-  });
-
-}
+//function exportFile(results) {
+//  let output = "";
+//  for(let i in prefixLenghts) {
+//    output += "test" + "\t" + "test" + "\n";
+//  }
+//
+//  let writingPromise = writeFile('data.dat', new Buffer(output));
+//  writingPromise.done(function() {
+//    console.log("Results written to data.dat file!");
+//  });
+//
+//}
 
 
 Q.all([
