@@ -28,7 +28,7 @@ var Node = (function () {
   }, {
     key: "isLeaf",
     value: function isLeaf() {
-      if (this.children.length === 0) return true;
+      return this.children.length === 0;
     }
   }, {
     key: "link",
@@ -53,7 +53,7 @@ var SuffixTree = (function () {
     this.inputs = [];
 
     this.virtualRoot = new Node("virutalRoot");
-    this.rootNode = new Node("root", this.start, this.start - 1);
+    this.rootNode = new Node("root");
 
     // virtualRoot --> root --> virtualRoot
     this.virtualRoot.addChild(this.rootNode);
@@ -61,8 +61,6 @@ var SuffixTree = (function () {
     this.rootNode.link = this.virtualRoot;
 
     this.text = "";
-
-    console.log(this.virtualRoot);
   }
 
   _createClass(SuffixTree, [{
@@ -88,15 +86,20 @@ var SuffixTree = (function () {
       var canonizedNode = this.canonize(activeNode, { start: start, end: end });
       // TODO: implement testAndSplit function
       // TODO: add text indices to references in Node class
-      //var resultTestAndSplit = this.testAndSplit(canonizedNode, input, );
+      var resultTestAndSplit = this.testAndSplit(canonizedNode);
     }
   }, {
     key: "canonize",
-    value: function canonize(activeNode, input) {
-      while (activeNode.reference.end - activeNode.reference.start + 1 > 0) {
-        var child = undefined;
+    value: function canonize(activeNode, reference) {
+      var start = reference.start;
+      var end = reference.end;
+
+      console.log("start", start);
+      console.log("end", end);
+      while (end - start + 1 > 0) {
 
         // find child with correct edge
+        var child = undefined;
         for (var index in activeNode.children) {
           var childStartIndex = activeNode.children[index].reference.start;
           if (input[activeNode.reference.start] === input[childStartIndex]) {
