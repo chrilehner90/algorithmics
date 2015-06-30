@@ -44,9 +44,9 @@ Q.all([
   sherlockHolmes4Promise,
   sherlockHolmes5Promise
 ])
-  .done(function(data) {
-    var suffixTree = new SuffixTree();
-    suffixTree.buildSuffixTree("ababbaa");
+.done(function(data) {
+  var suffixTree = new SuffixTree();
+  suffixTree.buildSuffixTree("ababbaa$");
 
 
-  });
+});
