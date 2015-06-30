@@ -83,10 +83,16 @@ var SuffixTree = (function () {
       var end = reference.end;
 
       var lastInsertedNode = this.rootNode;
-      var canonizedNode = this.canonize(activeNode, { start: start, end: end });
-      // TODO: implement testAndSplit function
+      var canonizedNode = undefined;
+      var newStart = 0;
+
+      var _canonize = this.canonize(activeNode, { start: start, end: end });
+
+      canonizedNode = _canonize.activeNode;
+      newStart = _canonize.start;
+
       // TODO: add text indices to references in Node class
-      var resultTestAndSplit = this.testAndSplit(canonizedNode);
+      var resultTestAndSplit = this.testAndSplit(canonizedNode, { start: start, end: end }, this.input[index]);
     }
   }, {
     key: "canonize",
@@ -94,10 +100,7 @@ var SuffixTree = (function () {
       var start = reference.start;
       var end = reference.end;
 
-      console.log("start", start);
-      console.log("end", end);
       while (end - start + 1 > 0) {
-
         // find child with correct edge
         var child = undefined;
         for (var index in activeNode.children) {
@@ -109,17 +112,18 @@ var SuffixTree = (function () {
         }
 
         // check for minimal reference or if child is a leaf
-        if (child.reference.end - child.reference.start > activeNode.reference.end - activeNode.reference.start || child.isLeaf()) {
+        var edgeLength = child.reference.end - child.reference.start;
+        if (edgeLength > activeNode.reference.end - activeNode.reference.start || child.isLeaf()) {
           break;
         }
         activeNode = child;
-        activeNode.reference.start += 1;
+        start += edgeLength;
       }
-      return activeNode;
+      return { activeNode: activeNode, start: start };
     }
   }, {
     key: "testAndSplit",
-    value: function testAndSplit() {}
+    value: function testAndSplit(canonizedNode, reference, character) {}
   }, {
     key: "input",
     set: function set(text) {

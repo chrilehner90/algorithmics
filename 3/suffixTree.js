@@ -71,18 +71,18 @@ class SuffixTree {
   update(activeNode, reference, index) {
     let { start, end } = reference;
     let lastInsertedNode = this.rootNode;
-    let canonizedNode = this.canonize(activeNode, { start: start, end: end });
-    // TODO: implement testAndSplit function
+    let canonizedNode = undefined;
+    let newStart = 0;
+    ( { activeNode: canonizedNode, start: newStart } = this.canonize(activeNode, { start: start, end: end }) );
+
     // TODO: add text indices to references in Node class
-    var resultTestAndSplit = this.testAndSplit(canonizedNode);
+    var resultTestAndSplit = this.testAndSplit(canonizedNode, { start: start, end: end }, this.input[index]);
   }
 
   canonize(activeNode, reference) {
     let { start, end } = reference;
-    console.log("start", start);
-    console.log("end", end);
-    while(end - start + 1 > 0) {
 
+    while(end - start + 1 > 0) {
       // find child with correct edge
       let child = undefined;
       for(var index in activeNode.children) {
@@ -94,17 +94,17 @@ class SuffixTree {
       }
 
       // check for minimal reference or if child is a leaf
-      if(child.reference.end - child.reference.start > activeNode.reference.end - activeNode.reference.start || child.isLeaf()) {
+      let edgeLength = child.reference.end - child.reference.start;
+      if(edgeLength > activeNode.reference.end - activeNode.reference.start || child.isLeaf()) {
         break;
       }
       activeNode = child;
-      activeNode.reference.start += 1;
+      start += edgeLength;
     }
-    return activeNode;
+    return { activeNode: activeNode, start: start };
   }
 
-  testAndSplit() {
-
+  testAndSplit(canonizedNode, reference, character) {
   }
 }
 
