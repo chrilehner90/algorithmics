@@ -125,7 +125,11 @@ class SuffixTree {
         return { done: true, testAndSplitNode: canonizedNode };
       }
       else {
-        // TODO: split
+        let newParent = new Node("", start, end);
+        let newChild = new Node(end + 1, child.reference.end);
+        canonizedNode.addChild(newParent);
+        newParent.addChild(newChild);
+        return { done: false, testAndSplitNode: newParent };
       }
     }
   }

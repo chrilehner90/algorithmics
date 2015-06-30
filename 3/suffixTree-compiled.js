@@ -144,7 +144,13 @@ var SuffixTree = (function () {
         var child = findChild(canonizedNode, start);
         if (character === this.input[child.reference.end + 1]) {
           return { done: true, testAndSplitNode: canonizedNode };
-        } else {}
+        } else {
+          var newParent = new Node("", start, end);
+          var newChild = new Node(end + 1, child.reference.end);
+          canonizedNode.addChild(newParent);
+          newParent.addChild(newChild);
+          return { done: false, testAndSplitNode: newParent };
+        }
       }
     }
   }, {
@@ -161,7 +167,5 @@ var SuffixTree = (function () {
 })();
 
 module.exports = SuffixTree;
-
-// TODO: split
 
 //# sourceMappingURL=suffixTree-compiled.js.map
