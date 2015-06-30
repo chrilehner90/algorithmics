@@ -64,6 +64,19 @@ var SuffixTree = (function () {
   }
 
   _createClass(SuffixTree, [{
+    key: "findChild",
+    value: function findChild(node, start) {
+      // find child with correct edge
+      var child = undefined;
+      for (var index in node.children) {
+        var childStartIndex = node.children[index].reference.start;
+        if (input[start] === input[childStartIndex]) {
+          return node.children[index];
+          break;
+        }
+      }
+    }
+  }, {
     key: "buildSuffixTree",
     value: function buildSuffixTree(input) {
       this.input = input;
@@ -101,16 +114,7 @@ var SuffixTree = (function () {
       var end = reference.end;
 
       while (end - start + 1 > 0) {
-        // find child with correct edge
-        var child = undefined;
-        for (var index in activeNode.children) {
-          var childStartIndex = activeNode.children[index].reference.start;
-          if (input[activeNode.reference.start] === input[childStartIndex]) {
-            child = activeNode.children[index];
-            break;
-          }
-        }
-
+        var child = findChild(activeNode, start);
         // check for minimal reference or if child is a leaf
         var edgeLength = child.reference.end - child.reference.start;
         if (edgeLength > activeNode.reference.end - activeNode.reference.start || child.isLeaf()) {

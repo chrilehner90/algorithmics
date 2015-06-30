@@ -56,6 +56,18 @@ class SuffixTree {
     return this.text;
   }
 
+  findChild(node, start) {
+    // find child with correct edge
+    let child = undefined;
+    for (var index in node.children) {
+      let childStartIndex = node.children[index].reference.start;
+      if (input[start] === input[childStartIndex]) {
+        return node.children[index];
+        break;
+      }
+    }
+  }
+
   buildSuffixTree(input) {
     this.input = input;
 
@@ -83,16 +95,7 @@ class SuffixTree {
     let { start, end } = reference;
 
     while(end - start + 1 > 0) {
-      // find child with correct edge
-      let child = undefined;
-      for(var index in activeNode.children) {
-        let childStartIndex = activeNode.children[index].reference.start;
-        if(input[activeNode.reference.start] === input[childStartIndex]) {
-          child = activeNode.children[index];
-          break;
-        }
-      }
-
+      let child = findChild(activeNode, start);
       // check for minimal reference or if child is a leaf
       let edgeLength = child.reference.end - child.reference.start;
       if(edgeLength > activeNode.reference.end - activeNode.reference.start || child.isLeaf()) {
