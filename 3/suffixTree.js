@@ -63,20 +63,21 @@ class SuffixTree {
     this.input = input;
 
     let activeNode = this.rootNode;
-    //for(let i = 1; i < input.length; i++) {
-    //  // construct T^i from T^i-1
-    //  let result = this.update(activeNode,  input, i);
-    //  //start = result.start;
-    //  //activeNode = result.activeNode;
-    //}
+    for(let i = 1; i < input.length; i++) {
+      // construct T^i from T^i-1
+      let result = this.update(activeNode,  { start: this.start, end: this.start - 1 }, i);
+      //start = result.start;
+      //activeNode = result.activeNode;
+    }
   }
 
-  update(activeNode, input, index) {
+  update(activeNode, reference, index) {
+    let { start, end } = reference;
     let lastInsertedNode = this.rootNode;
-    let canonizedNode = this.canonize(activeNode, input);
+    let canonizedNode = this.canonize(activeNode, { start: start, end: end });
     // TODO: implement testAndSplit function
     // TODO: add text indices to references in Node class
-    //var resultTestAndSplit = this.testAndSplit(canonizedNode, input, );
+    var resultTestAndSplit = this.testAndSplit(canonizedNode, input, );
   }
 
   canonize(activeNode, input) {

@@ -71,18 +71,21 @@ var SuffixTree = (function () {
       this.input = input;
 
       var activeNode = this.rootNode;
-      //for(let i = 1; i < input.length; i++) {
-      //  // construct T^i from T^i-1
-      //  let result = this.update(activeNode,  input, i);
-      //  //start = result.start;
-      //  //activeNode = result.activeNode;
-      //}
+      for (var i = 1; i < input.length; i++) {
+        // construct T^i from T^i-1
+        var result = this.update(activeNode, { start: this.start, end: this.start - 1 }, i);
+        //start = result.start;
+        //activeNode = result.activeNode;
+      }
     }
   }, {
     key: "update",
-    value: function update(activeNode, input, index) {
+    value: function update(activeNode, reference, index) {
+      var start = reference.start;
+      var end = reference.end;
+
       var lastInsertedNode = this.rootNode;
-      var canonizedNode = this.canonize(activeNode, input);
+      var canonizedNode = this.canonize(activeNode, { start: start, end: end });
       // TODO: implement testAndSplit function
       // TODO: add text indices to references in Node class
       //var resultTestAndSplit = this.testAndSplit(canonizedNode, input, );
