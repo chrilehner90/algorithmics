@@ -1,6 +1,7 @@
 class Node {
-  constructor(start, end, textIndex) {
+  constructor(name, start, end, textIndex) {
 
+    this.name = name; // name just for debugging purposes
     this.children = []; // array of references to the text
 
     // reference inside the text
@@ -12,6 +13,18 @@ class Node {
     this.suffixLink = undefined;
   }
 
+  addChild(node) {
+    this.children.push(node);
+  }
+
+  set link(node) {
+    this.suffixLink = node;
+  }
+
+  get link() {
+    return this.suffixLink;
+  }
+
   isLeaf() {
     if(this.children.length === 0) return true
   }
@@ -19,29 +32,43 @@ class Node {
 
 class SuffixTree {
   constructor() {
-    this.start = 2;
+    this.start = 1;
 
     // collect all inputs
     this.inputs = [];
 
-    this.virtualRoot = new Node();
-    this.rootNode = new Node(this.start, 1);
+    this.virtualRoot = new Node("virutalRoot");
+    this.rootNode = new Node("root", this.start, this.start - 1);
 
     // virtualRoot --> root --> virtualRoot
-    this.virtualRoot.children.push(this.root);
-    this.rootNode.suffixLink = this.virtualRoot;
+    this.virtualRoot.addChild(this.rootNode);
+
+    this.rootNode.link = this.virtualRoot;
+
+    this.text = "";
+    
+    console.log(this.virtualRoot);
 
   }
 
+  set input(text) {
+    this.text = text;
+  }
+
+  get input() {
+    return this.text;
+  }
+
   buildSuffixTree(input) {
+    this.input = input;
 
     let activeNode = this.rootNode;
-    for(let i = 2; i < input.length; i++) {
-      // construct T^i from T^i-1
-      let result = this.update(activeNode, input, i);
-      //start = result.start;
-      //activeNode = result.activeNode;
-    }
+    //for(let i = 1; i < input.length; i++) {
+    //  // construct T^i from T^i-1
+    //  let result = this.update(activeNode,  input, i);
+    //  //start = result.start;
+    //  //activeNode = result.activeNode;
+    //}
   }
 
   update(activeNode, input, index) {
