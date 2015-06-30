@@ -127,7 +127,26 @@ var SuffixTree = (function () {
     }
   }, {
     key: "testAndSplit",
-    value: function testAndSplit(canonizedNode, reference, character) {}
+    value: function testAndSplit(canonizedNode, reference, character) {
+      var start = reference.start;
+      var end = reference.end;
+
+      if (start > end) {
+        // explicit reference
+        for (var index in canonizedNode.children) {
+          if (character === this.input[canonizedNode.children[index].reference.start]) {
+            return { done: true, testAndSplitNode: canonizedNode };
+          }
+        }
+        return { done: false, testAndSplitNode: canonizedNode };
+      } else {
+        // implicit reference
+        var child = findChild(canonizedNode, start);
+        if (character === this.input[child.reference.end + 1]) {
+          return { done: true, testAndSplitNode: canonizedNode };
+        } else {}
+      }
+    }
   }, {
     key: "input",
     set: function set(text) {
@@ -142,5 +161,7 @@ var SuffixTree = (function () {
 })();
 
 module.exports = SuffixTree;
+
+// TODO: split
 
 //# sourceMappingURL=suffixTree-compiled.js.map

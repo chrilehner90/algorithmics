@@ -108,6 +108,26 @@ class SuffixTree {
   }
 
   testAndSplit(canonizedNode, reference, character) {
+    let { start, end } = reference;
+    if(start > end) {
+      // explicit reference
+      for(var index in canonizedNode.children) {
+        if(character === this.input[canonizedNode.children[index].reference.start]) {
+          return { done: true, testAndSplitNode: canonizedNode };
+        }
+      }
+      return { done: false, testAndSplitNode: canonizedNode };
+    }
+    else {
+      // implicit reference
+      let child = findChild(canonizedNode, start);
+      if(character === this.input[child.reference.end + 1]) {
+        return { done: true, testAndSplitNode: canonizedNode };
+      }
+      else {
+        // TODO: split
+      }
+    }
   }
 }
 
