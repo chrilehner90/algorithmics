@@ -42,8 +42,8 @@ class SuffixTree {
     // collect all inputs
     this.inputs = [];
 
-    this.virtualRoot = new Node("virtualRoot");
-    this.rootNode = new Node("root");
+    this.virtualRoot = new Node("virtualRoot", 0, 0);
+    this.rootNode = new Node("root", 0, 0);
 
     // virtualRoot --> root --> virtualRoot
     this.virtualRoot.addChild(this.rootNode);
@@ -70,6 +70,7 @@ class SuffixTree {
 
   findChild(node, start) {
     // find child with correct edge
+    if(node === this.virtualRoot) return this.rootNode;
     for (var index in node.children) {
       let childStartIndex = node.children[index].reference.start;
       if (this.text[start] === this.text[childStartIndex]) {
@@ -130,24 +131,14 @@ class SuffixTree {
   }
 
   canonize(activeNode, start, end) {
-    //if(start > end && activeNode === undefined) {
-    //  activeNode = this.rootNode;
-    //  return [ activeNode, start ];
-    //}
-
-    if(activeNode === this.virtualRoot) {
-      return [ activeNode, start ];
-    }
-
     console.log("CANONIZE", start, end, activeNode.nodeName);
 
     while(end - start + 1 > 0) {
       let child = this.findChild(activeNode, start);
       // check for minimal reference or if child is a leaf
-      let edgeLength = child.reference.end - child.reference.start;
+      let edgeLength = child.reference.end - child.reference.start + 1;
       console.log("EDGE", edgeLength);
-      // TODO: edgeLength > end - start?
-      if(edgeLength > end - start || child.isLeaf()) {
+      if(child !== this.rootNode && (edgeLength > end - start || child.isLeaf())) {
         break;
       }
       activeNode = child;
