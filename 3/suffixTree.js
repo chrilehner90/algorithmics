@@ -72,11 +72,12 @@ class SuffixTree {
     this.input = input;
 
     let activeNode = this.rootNode;
+    let start = undefined;
     for(let i = 1; i < input.length; i++) {
       // construct T^i from T^i-1
-      let result = this.update(activeNode,  { start: this.start, end: this.start - 1 }, i);
-      //start = result.start;
-      //activeNode = result.activeNode;
+      // activeNode is the real active node
+      ( [ activeNode, this.start ] = this.update(activeNode,  { start: this.start, end: this.start - 1 }, i) );
+      // now activeNode is the endpoint
     }
   }
 
@@ -84,15 +85,35 @@ class SuffixTree {
     let { start, end } = reference;
     let lastInsertedNode = this.rootNode;
     let canonizedNode = undefined;
-    let newStart = 0;
-    ( { activeNode: canonizedNode, start: newStart } = this.canonize(activeNode, { start: start, end: end }) );
+    ( [ canonizedNode, start ] = this.canonize(activeNode, start, end) );
 
     // TODO: add text indices to references in Node class
-    var resultTestAndSplit = this.testAndSplit(canonizedNode, { start: start, end: end }, this.input[index]);
+    let [ done, newInnerNode ] = this.testAndSplit(canonizedNode, start, end, this.input[index]);
+    while(!done) {
+      //console.log("DONE:", done);
+      let newLeaf = new Node("", index, Infinity);
+      newInnerNode.addChild(newLeaf);
+      if(lastInsertedNode !== this.rootNode) {
+        lastInsertedNode.link = newInnerNode;
+      }
+      lastInsertedNode = newInnerNode;
+      ( [ canonizedNode, start ] = this.canonize(activeNode.link, start, end) );
+      console.log("CANONIZED NODE", canonizedNode);
+      ( [ done, newInnerNode ] = this.testAndSplit(canonizedNode, start, end , this.input[index]) );
+    }
+
+    if(lastInsertedNode !== this.rootNode) {
+      lastInsertedNode.link = newInnerNode;
+    }
+    return [ activeNode, start ];
   }
 
-  canonize(activeNode, reference) {
-    let { start, end } = reference;
+  canonize(activeNode, start, end) {
+
+    if(start > end && activeNode === undefined) {
+      activeNode = this.virtualRoot;
+      return { activeNode, start };
+    }
 
     while(end - start + 1 > 0) {
       let child = findChild(activeNode, start);
@@ -104,32 +125,35 @@ class SuffixTree {
       activeNode = child;
       start += edgeLength;
     }
-    return { activeNode: activeNode, start: start };
+
+    return [ activeNode, start ];
   }
 
-  testAndSplit(canonizedNode, reference, character) {
-    let { start, end } = reference;
+  testAndSplit(canonizedNode, start, end, character) {
     if(start > end) {
       // explicit reference
       for(var index in canonizedNode.children) {
-        if(character === this.input[canonizedNode.children[index].reference.start]) {
-          return { done: true, testAndSplitNode: canonizedNode };
+        console.log("EXPLICIT");
+        if(character === this.text[canonizedNode.children[index].reference.start]) {
+          console.log("TRUE");
+          return [ true, canonizedNode ];
         }
       }
-      return { done: false, testAndSplitNode: canonizedNode };
+      return [ false, canonizedNode ];
     }
     else {
       // implicit reference
+      console.log("IMPLICIT");
       let child = findChild(canonizedNode, start);
       if(character === this.input[child.reference.end + 1]) {
-        return { done: true, testAndSplitNode: canonizedNode };
+        return [ true, canonizedNode ];
       }
       else {
         let newParent = new Node("", start, end);
         let newChild = new Node(end + 1, child.reference.end);
         canonizedNode.addChild(newParent);
         newParent.addChild(newChild);
-        return { done: false, testAndSplitNode: newParent };
+        return [ false, newParent ];
       }
     }
   }
