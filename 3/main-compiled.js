@@ -38,7 +38,7 @@ var sherlockHolmes1Promise = readFile(sherlockHolmes1),
 
 Q.all([sherlockHolmes1Promise, sherlockHolmes2Promise, sherlockHolmes3Promise, sherlockHolmes4Promise, sherlockHolmes5Promise]).done(function (data) {
     var suffixTree = new SuffixTree();
-    suffixTree.buildSuffixTree('ababbaa$');
+    suffixTree.buildSuffixTree('ab');
 });
 
 //# sourceMappingURL=main-compiled.js.map

@@ -46,7 +46,5 @@ Q.all([
 ])
 .done(function(data) {
   var suffixTree = new SuffixTree();
-  suffixTree.buildSuffixTree("ababbaa$");
-
-
+  suffixTree.buildSuffixTree("ab");
 });
